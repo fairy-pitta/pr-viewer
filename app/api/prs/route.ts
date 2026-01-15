@@ -12,20 +12,26 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
     }
 
-    // Authorizationヘッダーからトークンを取得（オプション）
+    // Authorizationヘッダーからトークンを取得
     const authHeader = request.headers.get('authorization');
     const token = authHeader?.replace('Bearer ', '') || process.env.GITHUB_ACCESS_TOKEN || '';
 
-    // dependencyContainerを初期化（IndexedDBを使用）
-    if (token) {
-      await dependencyContainer.initialize({
-        githubAccessToken: token,
-        indexedDB: {
-          dbName: 'pr-viewer',
-          version: 1,
-        },
-      });
+    if (!token) {
+      return NextResponse.json(
+        { error: 'GitHub access token is required' },
+        { status: 401 }
+      );
     }
+
+    // dependencyContainerを初期化
+    // サーバーサイドではメモリストレージが自動的に使用される
+    await dependencyContainer.initialize({
+      githubAccessToken: token,
+      indexedDB: {
+        dbName: 'pr-viewer',
+        version: 1,
+      },
+    });
 
     const deps = dependencyContainer.getDependencies();
     const useCase = new GetPRsUseCase(deps.prRepository);
