@@ -60,10 +60,24 @@ describe('CommentAnalyzer', () => {
 
   describe('getBotComments', () => {
     it('should filter bot comments', () => {
+      const botComment1 = Comment.create({
+        id: '2',
+        author: { login: 'bot', type: 'Bot' },
+        content: 'Bot comment',
+        source: CommentSource.BOT,
+        createdAt: new Date(),
+      });
+      const botComment2 = Comment.create({
+        id: '3',
+        author: { login: 'copilot', type: 'Bot' },
+        content: 'Copilot comment',
+        source: CommentSource.COPILOT,
+        createdAt: new Date(),
+      });
       const comments = [
         createMockComment('1', CommentSource.REVIEWER),
-        createMockComment('2', CommentSource.BOT),
-        createMockComment('3', CommentSource.COPILOT),
+        botComment1,
+        botComment2,
       ];
 
       const botComments = analyzer.getBotComments(comments);
@@ -73,14 +87,21 @@ describe('CommentAnalyzer', () => {
 
   describe('getReviewerComments', () => {
     it('should filter reviewer comments', () => {
+      const botComment = Comment.create({
+        id: '2',
+        author: { login: 'bot', type: 'Bot' },
+        content: 'Bot comment',
+        source: CommentSource.BOT,
+        createdAt: new Date(),
+      });
       const comments = [
         createMockComment('1', CommentSource.REVIEWER),
-        createMockComment('2', CommentSource.BOT),
+        botComment,
         createMockComment('3', CommentSource.REVIEWER),
       ];
 
       const reviewerComments = analyzer.getReviewerComments(comments);
-      expect(reviewerComments).toHaveLength(2);
+      expect(reviewerComments).toHaveLength(2); // 人間のレビュアーのコメントのみ
     });
   });
 

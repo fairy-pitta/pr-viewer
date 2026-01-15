@@ -54,7 +54,7 @@ describe('CommentContent', () => {
   it('should create a valid content', () => {
     const content = CommentContent.create('This is a comment');
     expect(content.toString()).toBe('This is a comment');
-    expect(content.length()).toBe(18);
+    expect(content.length()).toBe(17); // 'This is a comment'の文字数
   });
 
   it('should throw error for empty content', () => {
