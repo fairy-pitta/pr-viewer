@@ -1,5 +1,5 @@
 // presentation/web/app/layout.tsx
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { ClientScript } from '@/components/ClientScript';
 
@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: 'PR Viewer',
   description: 'GitHub PR進捗管理アプリ',
   manifest: '/manifest.json',
+};
+
+export const viewport: Viewport = {
   themeColor: '#0066cc',
 };
 
