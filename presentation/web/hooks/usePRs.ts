@@ -27,11 +27,20 @@ export function usePRs(userId: string | null) {
         const response = await fetch(`/api/prs?userId=${userId}`, {
           headers,
         });
+        // #region agent log
+        typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'hooks/usePRs.ts:response-received',message:'Response received',data:{status:response.status,statusText:response.statusText,ok:response.ok,userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+        // #endregion
         if (!response.ok) {
           const errorData = await response.json().catch(()=>({}));
+          // #region agent log
+          typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'hooks/usePRs.ts:response-error',message:'Response error',data:{status:response.status,errorData},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+          // #endregion
           throw new Error(`Failed to fetch PRs: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
+        // #region agent log
+        typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'hooks/usePRs.ts:data-received',message:'Data received and setting PRs',data:{prsCount:Array.isArray(data)?data.length:0,dataType:Array.isArray(data)?'array':typeof data,firstPR:Array.isArray(data)&&data.length>0?data[0]:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+        // #endregion
         setPRs(data);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Unknown error'));

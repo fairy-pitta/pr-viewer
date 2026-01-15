@@ -45,6 +45,9 @@ export async function GET(request: NextRequest) {
     const deps = dependencyContainer.getDependencies();
     const useCase = new GetPRsUseCase(deps.prRepository);
     const prs = await useCase.execute({ userId: UserId.create(userId) });
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/route.ts:prs-fetched',message:'PRs fetched from repository',data:{prsCount:prs.length,prs:prs.slice(0,2)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+    // #endregion
 
     return NextResponse.json(prs);
   } catch (error) {

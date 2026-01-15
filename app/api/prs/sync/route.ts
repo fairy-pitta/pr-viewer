@@ -55,6 +55,9 @@ export async function POST(request: NextRequest) {
       userId: UserId.create(userId),
       force,
     });
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/sync/route.ts:sync-completed',message:'Sync completed successfully',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+    // #endregion
 
     return NextResponse.json({ success: true });
   } catch (error) {

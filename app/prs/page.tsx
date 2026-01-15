@@ -57,7 +57,14 @@ export default function PRsPage() {
 
   const handleSync = async () => {
     if (userId) {
+      // #region agent log
+      typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:handleSync',message:'Sync button clicked',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
       await sync(userId);
+      // 同期後にPR一覧を再取得（usePRsフックが自動的に再実行される）
+      // #region agent log
+      typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:sync-complete',message:'Sync completed in handleSync',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
     }
   };
 
