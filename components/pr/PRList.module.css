@@ -1,4 +1,17 @@
-/* presentation/web/components/pr/PRList.module.css */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  color: var(--color-secondary);
+}
 .list {
   display: flex;
   flex-direction: column;

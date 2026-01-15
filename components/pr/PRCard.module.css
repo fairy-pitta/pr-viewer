@@ -1,23 +1,26 @@
-/* presentation/web/components/pr/PRCard.module.css */
 .card {
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: var(--spacing-md);
+  border-radius: 12px;
+  padding: var(--spacing-lg);
   margin-bottom: var(--spacing-md);
   background: white;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
 }
 
 .card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+  border-left-color: #667eea;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: start;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-md);
 }
 
 .title {
@@ -25,31 +28,68 @@
   font-weight: 600;
   margin: 0;
   flex: 1;
+  color: var(--color-dark);
+  line-height: 1.4;
 }
 
 .status {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: 4px;
+  border-radius: 6px;
   font-size: var(--font-size-sm);
-  background: var(--color-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.status[data-status="open"] {
+  background: #28a745;
+  color: white;
+}
+
+.status[data-status="draft"] {
+  background: #6c757d;
+  color: white;
+}
+
+.status[data-status="merged"] {
+  background: #6f42c1;
+  color: white;
+}
+
+.status[data-status="closed"] {
+  background: #dc3545;
   color: white;
 }
 
 .meta {
   display: flex;
-  gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   font-size: var(--font-size-sm);
   color: var(--color-secondary);
+  align-items: center;
 }
 
 .repository {
-  font-weight: 500;
+  font-weight: 600;
+  color: #667eea;
+}
+
+.number {
+  color: var(--color-secondary);
+  font-family: 'Monaco', 'Menlo', monospace;
 }
 
 .stats {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-lg);
   font-size: var(--font-size-sm);
   color: var(--color-secondary);
+  flex-wrap: wrap;
+}
+
+.stats span {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
