@@ -8,6 +8,7 @@ import { GitHubCommentRepository } from '../repositories/GitHubCommentRepository
 import { GitHubReviewRepository } from '../repositories/GitHubReviewRepository';
 import { GitHubAPIClient } from '../external/github/GitHubAPIClient';
 import { VercelKVClient } from '../external/storage/VercelKVClient';
+import { CloudflareKVClient } from '../external/storage/CloudflareKVClient';
 import { IndexedDBClient } from '../external/storage/IndexedDBClient';
 import { BrowserNotificationService } from '../notifications/BrowserNotificationService';
 import { PWAPushNotificationService } from '../notifications/PWAPushNotificationService';
@@ -26,6 +27,7 @@ export interface DependencyConfig {
     url: string;
     token: string;
   };
+  cloudflareKV?: KVNamespace; // Cloudflare Workers環境で注入される
   indexedDB?: {
     dbName: string;
     version: number;
@@ -43,7 +45,10 @@ export class DependencyContainer {
     // ストレージクライアント
     let prRepository: PRRepository;
     
-    if (config.vercelKV) {
+    if (config.cloudflareKV) {
+      const kvClient = new CloudflareKVClient(config.cloudflareKV);
+      prRepository = new VercelKVPRRepository(kvClient as any); // 同じインターフェース
+    } else if (config.vercelKV) {
       const kvClient = new VercelKVClient(config.vercelKV);
       prRepository = new VercelKVPRRepository(kvClient);
     } else if (config.indexedDB) {
@@ -51,7 +56,7 @@ export class DependencyContainer {
       await dbClient.open();
       prRepository = new IndexedDBPRRepository(dbClient);
     } else {
-      throw new Error('Either Vercel KV or IndexedDB configuration is required');
+      throw new Error('Either Vercel KV, Cloudflare KV, or IndexedDB configuration is required');
     }
 
     // リポジトリ

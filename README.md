@@ -48,18 +48,6 @@ PR Viewerは、GitHubのPull Requestを効率的に管理するためのWebア�
 npm install
 ```
 
-### 環境変数
-
-`.env.local`ファイルを作成し、以下の環境変数を設定してください：
-
-```env
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_REDIRECT_URI=http://localhost:3000/auth/callback
-VERCEL_KV_URL=your_vercel_kv_url
-VERCEL_KV_TOKEN=your_vercel_kv_token
-```
-
 ### 開発サーバー起動
 
 ```bash
@@ -67,6 +55,34 @@ npm run dev
 ```
 
 ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
+
+**注意**: 現在の実装では**IndexedDB**（ブラウザのローカルストレージ）を使用するため、追加の設定は不要です。データはブラウザに保存されます。
+
+### 環境変数（本番環境用）
+
+本番環境でGitHub認証を使用する場合、以下の環境変数を設定してください：
+
+```env
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+GITHUB_REDIRECT_URI=https://your-domain.com/auth/callback
+```
+
+## デプロイ
+
+### Vercel
+
+```bash
+vercel
+```
+
+### Cloudflare Pages（推奨：カスタムドメイン無料）
+
+詳細は [CLOUDFLARE.md](./CLOUDFLARE.md) を参照してください。
+
+1. Cloudflare Dashboard → Pages → Create a project
+2. GitHubリポジトリを接続
+3. カスタムドメインを追加（**無料**）
 
 ## プロジェクト構造
 
