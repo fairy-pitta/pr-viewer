@@ -2,10 +2,10 @@
 'use client';
 
 import { useState } from 'react';
-import { usePRs } from '../../hooks/usePRs';
-import { useSync } from '../../hooks/useSync';
-import { PRList } from '../../components/pr/PRList';
-import { FilterSidebar, type FilterState } from '../../components/filters/FilterSidebar';
+import { usePRs } from '../../../hooks/usePRs';
+import { useSync } from '../../../hooks/useSync';
+import { PRList } from '../../../components/pr/PRList';
+import { FilterSidebar, type FilterState } from '../../../components/filters/FilterSidebar';
 import styles from './page.module.css';
 
 export default function PRsPage() {
