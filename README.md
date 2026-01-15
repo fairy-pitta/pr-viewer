@@ -54,19 +54,52 @@ npm install
 npm run dev
 ```
 
-ブラウザで [http://localhost:3000](http://localhost:3000) を開きます。
+ブラウザで [http://localhost:3333](http://localhost:3333) を開きます。
 
 **注意**: 現在の実装では**IndexedDB**（ブラウザのローカルストレージ）を使用するため、追加の設定は不要です。データはブラウザに保存されます。
 
-### 環境変数（本番環境用）
+## ログイン方法
 
-本番環境でGitHub認証を使用する場合、以下の環境変数を設定してください：
+このアプリでは、**GitHub Personal Access Token (PAT)**を使用してログインします。
+
+### PATの作成方法
+
+1. GitHubにログイン
+2. **Settings** → **Developer settings** → **Personal access tokens** → **Tokens (classic)** に移動
+3. **Generate new token (classic)** をクリック
+4. 以下の設定を行います：
+   - **Note**: トークンの説明（例: "PR Viewer"）
+   - **Expiration**: 有効期限を設定（推奨: 90日または無期限）
+   - **Select scopes**: 以下の権限にチェック
+     - ✅ `repo` - リポジトリへのアクセス（プライベートリポジトリも含む）
+     - ✅ `read:user` - ユーザー情報の読み取り
+5. **Generate token** をクリック
+6. 表示されたトークンを**必ずコピーして保存**してください（後で再表示できません）
+
+### ログイン手順
+
+1. アプリを開く（`http://localhost:3333`）
+2. **ログインして始める** ボタンをクリック、または `/login` ページに移動
+3. 作成したPATを入力
+4. **ログイン** ボタンをクリック
+5. ログイン後、PR一覧ページに自動的にリダイレクトされます
+
+### セキュリティについて
+
+- PATは**ブラウザのセッションストレージ**にのみ保存されます
+- ページを閉じるとセッションは終了します（次回アクセス時は再度ログインが必要）
+- PATは**絶対に他人と共有しない**でください
+- PATが漏洩した場合は、すぐにGitHubで無効化してください
+
+### 環境変数（オプション）
+
+本番環境で環境変数としてトークンを設定することも可能です：
 
 ```env
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-GITHUB_REDIRECT_URI=https://your-domain.com/auth/callback
+GITHUB_ACCESS_TOKEN=your_personal_access_token
 ```
+
+この場合、ユーザーはログインなしで使用できます（セキュリティ上の推奨事項ではありません）。
 
 ## デプロイ
 

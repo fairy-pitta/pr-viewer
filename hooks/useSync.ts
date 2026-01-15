@@ -11,14 +11,16 @@ export function useSync() {
     setSyncing(true);
     setError(null);
 
-    try {
-      const response = await fetch('/api/prs/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId, force }),
-      });
+      try {
+        const token = typeof window !== 'undefined' ? sessionStorage.getItem('github_token') : null;
+        const response = await fetch('/api/prs/sync', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` }),
+          },
+          body: JSON.stringify({ userId, force }),
+        });
 
       if (!response.ok) {
         throw new Error('Failed to sync PRs');
