@@ -1,0 +1,33 @@
+/* presentation/web/app/page.module.css */
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.description {
+  font-size: var(--font-size-lg);
+  color: var(--color-secondary);
+  margin-bottom: var(--spacing-xl);
+}
+
+.link {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-primary);
+  color: white;
+  border-radius: 8px;
+  font-size: var(--font-size-lg);
+  transition: background 0.2s;
+}
+
+.link:hover {
+  background: #0052a3;
+}
