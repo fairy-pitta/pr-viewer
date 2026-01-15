@@ -39,6 +39,9 @@
       ],
       "@/hooks/*": [
         "./presentation/web/hooks/*"
+      ],
+      "@app/*": [
+        "./app/*"
       ]
     },
     "jsx": "preserve",
@@ -54,6 +57,7 @@
     "infrastructure",
     "presentation",
     "shared",
+    "types",
     ".next/types/**/*.ts"
   ],
   "exclude": [

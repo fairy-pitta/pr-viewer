@@ -1,6 +1,6 @@
 // domain/repositories/ReviewRepository.ts
-import { Review } from '../entities/Review';
-import { PRId } from '../value-objects/PRId';
+import { Review } from '@domain/entities/Review';
+import { PRId } from '@domain/value-objects/PRId';
 
 export interface ReviewRepository {
   findByPR(prId: PRId): Promise<Review[]>;

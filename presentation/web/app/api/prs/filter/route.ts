@@ -1,10 +1,10 @@
 // presentation/web/app/api/prs/filter/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { FilterPRsUseCase } from '../../../../application/use-cases/filter-prs/FilterPRsUseCase';
-import { UserId } from '../../../../domain/entities/User';
-import { PRState } from '../../../../domain/value-objects/PRState';
-import { Repository } from '../../../../domain/value-objects/Repository';
-import { dependencyContainer } from '../../../../infrastructure/config/dependencies';
+import { FilterPRsUseCase } from '@application/use-cases/filter-prs/FilterPRsUseCase';
+import { UserId } from '@domain/entities/User';
+import { PRState } from '@domain/value-objects/PRState';
+import { Repository } from '@domain/value-objects/Repository';
+import { dependencyContainer } from '@infrastructure/config/dependencies';
 
 export async function POST(request: NextRequest) {
   try {

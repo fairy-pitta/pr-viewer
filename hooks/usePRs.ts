@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { PRDTO } from '../../../application/dto/PRDTO';
+import type { PRDTO } from '@application/dto/PRDTO';
 
 export function usePRs(userId: string | null) {
   const [prs, setPRs] = useState<PRDTO[]>([]);

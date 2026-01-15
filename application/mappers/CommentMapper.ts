@@ -1,6 +1,6 @@
 // application/mappers/CommentMapper.ts
-import { Comment } from '../../domain/entities/Comment';
-import type { CommentDTO } from '../dto/CommentDTO';
+import { Comment } from '@domain/entities/Comment';
+import type { CommentDTO } from '@application/dto/CommentDTO';
 
 export class CommentMapper {
   static toDTO(comment: Comment): CommentDTO {

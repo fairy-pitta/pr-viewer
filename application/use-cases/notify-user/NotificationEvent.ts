@@ -1,5 +1,5 @@
 // application/use-cases/notify-user/NotificationEvent.ts
-import { PRId } from '../../../domain/value-objects/PRId';
+import { PRId } from '@domain/value-objects/PRId';
 
 export type NotificationEventType =
   | 'new_comment'

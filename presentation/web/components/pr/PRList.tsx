@@ -1,7 +1,7 @@
 // presentation/web/components/pr/PRList.tsx
 'use client';
 
-import type { PRDTO } from '../../../../application/dto/PRDTO';
+import type { PRDTO } from '@application/dto/PRDTO';
 import { PRCard } from './PRCard';
 import styles from './PRList.module.css';
 

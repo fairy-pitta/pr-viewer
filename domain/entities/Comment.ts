@@ -1,5 +1,5 @@
 // domain/entities/Comment.ts
-import { CommentSource, type GitHubAuthor } from '../value-objects/CommentSource';
+import { CommentSource, type GitHubAuthor } from '@domain/value-objects/CommentSource';
 
 export class CommentId {
   private constructor(private readonly value: string) {

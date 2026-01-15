@@ -1,7 +1,7 @@
 // presentation/web/components/pr/PRCard.tsx
 'use client';
 
-import type { PRDTO } from '../../../../application/dto/PRDTO';
+import type { PRDTO } from '@application/dto/PRDTO';
 import styles from './PRCard.module.css';
 
 interface PRCardProps {

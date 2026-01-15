@@ -1,8 +1,8 @@
 // domain/entities/PR.ts
-import { PRId } from '../value-objects/PRId';
-import { PRState } from '../value-objects/PRState';
-import { Repository } from '../value-objects/Repository';
-import { UserMetadata } from '../value-objects/UserMetadata';
+import { PRId } from '@domain/value-objects/PRId';
+import { PRState } from '@domain/value-objects/PRState';
+import { Repository } from '@domain/value-objects/Repository';
+import { UserMetadata } from '@domain/value-objects/UserMetadata';
 import { Comment } from './Comment';
 import { Review } from './Review';
 

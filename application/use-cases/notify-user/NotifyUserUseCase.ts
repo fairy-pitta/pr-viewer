@@ -1,6 +1,6 @@
 // application/use-cases/notify-user/NotifyUserUseCase.ts
-import type { PRRepository } from '../../../domain/repositories/PRRepository';
-import type { NotificationService } from '../../../infrastructure/notifications/BrowserNotificationService';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import type { NotificationService } from '@infrastructure/notifications/BrowserNotificationService';
 import { NotificationEvent } from './NotificationEvent';
 
 export class NotifyUserUseCase {

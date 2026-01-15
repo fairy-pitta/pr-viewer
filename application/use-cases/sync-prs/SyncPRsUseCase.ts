@@ -1,10 +1,10 @@
 // application/use-cases/sync-prs/SyncPRsUseCase.ts
-import type { PRRepository } from '../../../domain/repositories/PRRepository';
-import type { CommentRepository } from '../../../domain/repositories/CommentRepository';
-import type { ReviewRepository } from '../../../domain/repositories/ReviewRepository';
-import { PRStatusCalculator } from '../../../domain/services/PRStatusCalculator';
-import { GitHubAPIClient } from '../../../infrastructure/external/github/GitHubAPIClient';
-import { GitHubPRMapper } from '../../../infrastructure/external/github/GitHubPRMapper';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import type { CommentRepository } from '@domain/repositories/CommentRepository';
+import type { ReviewRepository } from '@domain/repositories/ReviewRepository';
+import { PRStatusCalculator } from '@domain/services/PRStatusCalculator';
+import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
+import { GitHubPRMapper } from '@infrastructure/external/github/GitHubPRMapper';
 import { SyncPRsCommand } from './SyncPRsCommand';
 
 export class SyncPRsUseCase {
@@ -32,12 +32,12 @@ export class SyncPRsUseCase {
 
       try {
         // コメント取得
-        if (this.commentRepository instanceof (await import('../../../infrastructure/repositories/GitHubCommentRepository')).GitHubCommentRepository) {
+        if (this.commentRepository instanceof (await import('@infrastructure/repositories/GitHubCommentRepository')).GitHubCommentRepository) {
           comments = await (this.commentRepository as any).findByPRWithRepository(owner, repo, number);
         }
 
         // レビュー取得
-        if (this.reviewRepository instanceof (await import('../../../infrastructure/repositories/GitHubReviewRepository')).GitHubReviewRepository) {
+        if (this.reviewRepository instanceof (await import('@infrastructure/repositories/GitHubReviewRepository')).GitHubReviewRepository) {
           reviews = await (this.reviewRepository as any).findByPRWithRepository(owner, repo, number);
         }
       } catch (error) {

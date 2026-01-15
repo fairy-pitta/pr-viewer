@@ -1,8 +1,8 @@
 // domain/services/PRStatusCalculator.ts
-import { PR } from '../entities/PR';
-import { Review } from '../entities/Review';
-import { ReviewStatus } from '../entities/PR';
-import { PRState } from '../value-objects/PRState';
+import { PR } from '@domain/entities/PR';
+import { Review } from '@domain/entities/Review';
+import { ReviewStatus } from '@domain/entities/PR';
+import { PRState } from '@domain/value-objects/PRState';
 
 export class PRStatusCalculator {
   calculateReviewStatus(pr: PR, reviews: Review[]): ReviewStatus {

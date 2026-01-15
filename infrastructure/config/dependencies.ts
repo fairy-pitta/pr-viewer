@@ -1,17 +1,17 @@
 // infrastructure/config/dependencies.ts
-import type { PRRepository } from '../../domain/repositories/PRRepository';
-import type { CommentRepository } from '../../domain/repositories/CommentRepository';
-import type { ReviewRepository } from '../../domain/repositories/ReviewRepository';
-import { VercelKVPRRepository } from '../repositories/VercelKVPRRepository';
-import { IndexedDBPRRepository } from '../repositories/IndexedDBPRRepository';
-import { GitHubCommentRepository } from '../repositories/GitHubCommentRepository';
-import { GitHubReviewRepository } from '../repositories/GitHubReviewRepository';
-import { GitHubAPIClient } from '../external/github/GitHubAPIClient';
-import { VercelKVClient } from '../external/storage/VercelKVClient';
-import { CloudflareKVClient } from '../external/storage/CloudflareKVClient';
-import { IndexedDBClient } from '../external/storage/IndexedDBClient';
-import { BrowserNotificationService } from '../notifications/BrowserNotificationService';
-import { PWAPushNotificationService } from '../notifications/PWAPushNotificationService';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import type { CommentRepository } from '@domain/repositories/CommentRepository';
+import type { ReviewRepository } from '@domain/repositories/ReviewRepository';
+import { VercelKVPRRepository } from '@infrastructure/repositories/VercelKVPRRepository';
+import { IndexedDBPRRepository } from '@infrastructure/repositories/IndexedDBPRRepository';
+import { GitHubCommentRepository } from '@infrastructure/repositories/GitHubCommentRepository';
+import { GitHubReviewRepository } from '@infrastructure/repositories/GitHubReviewRepository';
+import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
+import { VercelKVClient } from '@infrastructure/external/storage/VercelKVClient';
+import { CloudflareKVClient } from '@infrastructure/external/storage/CloudflareKVClient';
+import { IndexedDBClient } from '@infrastructure/external/storage/IndexedDBClient';
+import { BrowserNotificationService } from '@infrastructure/notifications/BrowserNotificationService';
+import { PWAPushNotificationService } from '@infrastructure/notifications/PWAPushNotificationService';
 
 export interface Dependencies {
   prRepository: PRRepository;

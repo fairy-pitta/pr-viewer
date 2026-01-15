@@ -1,5 +1,5 @@
 // domain/value-objects/PRState.ts
-import { InvalidPRStateError } from '../errors/InvalidPRStateError';
+import { InvalidPRStateError } from '@domain/errors/InvalidPRStateError';
 
 export class PRState {
   private constructor(private readonly value: string) {

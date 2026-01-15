@@ -1,6 +1,6 @@
 // domain/services/CommentAnalyzer.ts
-import { Comment } from '../entities/Comment';
-import { CommentSource } from '../value-objects/CommentSource';
+import { Comment } from '@domain/entities/Comment';
+import { CommentSource } from '@domain/value-objects/CommentSource';
 
 export class CommentStatistics {
   private constructor(

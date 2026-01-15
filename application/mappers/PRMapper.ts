@@ -1,7 +1,7 @@
 // application/mappers/PRMapper.ts
-import { PR } from '../../domain/entities/PR';
-import type { PRDTO } from '../dto/PRDTO';
-import { CommentAnalyzer } from '../../domain/services/CommentAnalyzer';
+import { PR } from '@domain/entities/PR';
+import type { PRDTO } from '@application/dto/PRDTO';
+import { CommentAnalyzer } from '@domain/services/CommentAnalyzer';
 
 export class PRMapper {
   private static commentAnalyzer = new CommentAnalyzer();

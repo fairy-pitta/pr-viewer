@@ -1,10 +1,10 @@
 // infrastructure/repositories/VercelKVPRRepository.ts
-import type { PRRepository } from '../../domain/repositories/PRRepository';
-import { PR } from '../../domain/entities/PR';
-import { PRId } from '../../domain/value-objects/PRId';
-import { Repository } from '../../domain/value-objects/Repository';
-import { UserId } from '../../domain/entities/User';
-import { VercelKVClient } from '../external/storage/VercelKVClient';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import { PR } from '@domain/entities/PR';
+import { PRId } from '@domain/value-objects/PRId';
+import { Repository } from '@domain/value-objects/Repository';
+import { UserId } from '@domain/entities/User';
+import { VercelKVClient } from '@infrastructure/external/storage/VercelKVClient';
 
 export class VercelKVPRRepository implements PRRepository {
   constructor(private kv: VercelKVClient) {}

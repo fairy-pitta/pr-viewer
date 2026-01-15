@@ -25,7 +25,7 @@ export class CloudflareKVClient {
   }
 
   async hget(key: string, field: string): Promise<string | null> {
-    const data = await this.kv.get(`${key}:${field}`, 'text');
+    const data = await this.kv.get(`${key}:${field}`, { type: 'text' });
     return data;
   }
 

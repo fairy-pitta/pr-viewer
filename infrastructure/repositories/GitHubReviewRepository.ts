@@ -1,9 +1,9 @@
 // infrastructure/repositories/GitHubReviewRepository.ts
-import type { ReviewRepository } from '../../domain/repositories/ReviewRepository';
-import { Review } from '../../domain/entities/Review';
-import { PRId } from '../../domain/value-objects/PRId';
-import { GitHubAPIClient } from '../external/github/GitHubAPIClient';
-import { GitHubPRMapper } from '../external/github/GitHubPRMapper';
+import type { ReviewRepository } from '@domain/repositories/ReviewRepository';
+import { Review } from '@domain/entities/Review';
+import { PRId } from '@domain/value-objects/PRId';
+import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
+import { GitHubPRMapper } from '@infrastructure/external/github/GitHubPRMapper';
 
 export class GitHubReviewRepository implements ReviewRepository {
   constructor(private githubClient: GitHubAPIClient) {}

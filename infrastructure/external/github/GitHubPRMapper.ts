@@ -1,11 +1,11 @@
 // infrastructure/external/github/GitHubPRMapper.ts
-import { PR } from '../../domain/entities/PR';
-import { Comment } from '../../domain/entities/Comment';
-import { Review } from '../../domain/entities/Review';
-import { PRState } from '../../domain/value-objects/PRState';
-import { CommentSource } from '../../domain/value-objects/CommentSource';
-import { ReviewState } from '../../domain/value-objects/ReviewState';
-import { ReviewStatus } from '../../domain/entities/PR';
+import { PR } from '@domain/entities/PR';
+import { Comment } from '@domain/entities/Comment';
+import { Review } from '@domain/entities/Review';
+import { PRState } from '@domain/value-objects/PRState';
+import { CommentSource } from '@domain/value-objects/CommentSource';
+import { ReviewState } from '@domain/value-objects/ReviewState';
+import { ReviewStatus } from '@domain/entities/PR';
 import type { GitHubPR, GitHubComment, GitHubReview } from './types';
 
 export class GitHubPRMapper {

@@ -1,5 +1,5 @@
 // domain/value-objects/Repository.ts
-import { InvalidRepositoryError } from '../errors/InvalidRepositoryError';
+import { InvalidRepositoryError } from '@domain/errors/InvalidRepositoryError';
 
 export class Repository {
   private constructor(

@@ -1,10 +1,10 @@
 // infrastructure/repositories/IndexedDBPRRepository.ts
-import type { PRRepository } from '../../domain/repositories/PRRepository';
-import { PR } from '../../domain/entities/PR';
-import { PRId } from '../../domain/value-objects/PRId';
-import { Repository } from '../../domain/value-objects/Repository';
-import { UserId } from '../../domain/entities/User';
-import { IndexedDBClient } from '../external/storage/IndexedDBClient';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import { PR } from '@domain/entities/PR';
+import { PRId } from '@domain/value-objects/PRId';
+import { Repository } from '@domain/value-objects/Repository';
+import { UserId } from '@domain/entities/User';
+import { IndexedDBClient } from '@infrastructure/external/storage/IndexedDBClient';
 
 export class IndexedDBPRRepository implements PRRepository {
   constructor(private db: IndexedDBClient) {}

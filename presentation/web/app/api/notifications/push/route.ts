@@ -1,8 +1,8 @@
 // presentation/web/app/api/notifications/push/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { NotifyUserUseCase } from '../../../../application/use-cases/notify-user/NotifyUserUseCase';
-import { PRId } from '../../../../domain/value-objects/PRId';
-import { dependencyContainer } from '../../../../infrastructure/config/dependencies';
+import { NotifyUserUseCase } from '@application/use-cases/notify-user/NotifyUserUseCase';
+import { PRId } from '@domain/value-objects/PRId';
+import { dependencyContainer } from '@infrastructure/config/dependencies';
 
 export async function POST(request: NextRequest) {
   try {

@@ -1,5 +1,5 @@
 // domain/entities/Review.ts
-import { ReviewState } from '../value-objects/ReviewState';
+import { ReviewState } from '@domain/value-objects/ReviewState';
 
 export class ReviewId {
   private constructor(private readonly value: string) {

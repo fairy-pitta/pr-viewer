@@ -1,6 +1,6 @@
 // domain/repositories/CommentRepository.ts
-import { Comment } from '../entities/Comment';
-import { PRId } from '../value-objects/PRId';
+import { Comment } from '@domain/entities/Comment';
+import { PRId } from '@domain/value-objects/PRId';
 
 export interface CommentRepository {
   findByPR(prId: PRId): Promise<Comment[]>;

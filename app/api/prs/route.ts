@@ -1,8 +1,8 @@
 // api/prs/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { GetPRsUseCase } from '../../../application/use-cases/get-prs/GetPRsUseCase';
-import { UserId } from '../../../domain/entities/User';
-import { dependencyContainer } from '../../../infrastructure/config/dependencies';
+import { GetPRsUseCase } from '@application/use-cases/get-prs/GetPRsUseCase';
+import { UserId } from '@domain/entities/User';
+import { dependencyContainer } from '@infrastructure/config/dependencies';
 
 export async function GET(request: NextRequest) {
   try {

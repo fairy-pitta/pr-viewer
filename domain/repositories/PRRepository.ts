@@ -1,8 +1,8 @@
 // domain/repositories/PRRepository.ts
-import { PR } from '../entities/PR';
-import { PRId } from '../value-objects/PRId';
-import { Repository } from '../value-objects/Repository';
-import { UserId } from '../entities/User';
+import { PR } from '@domain/entities/PR';
+import { PRId } from '@domain/value-objects/PRId';
+import { Repository } from '@domain/value-objects/Repository';
+import { UserId } from '@domain/entities/User';
 
 export interface PRRepository {
   findById(id: PRId): Promise<PR | null>;

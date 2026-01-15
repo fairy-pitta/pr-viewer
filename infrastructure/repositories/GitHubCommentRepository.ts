@@ -1,10 +1,10 @@
 // infrastructure/repositories/GitHubCommentRepository.ts
-import type { CommentRepository } from '../../domain/repositories/CommentRepository';
-import { Comment } from '../../domain/entities/Comment';
-import { PRId } from '../../domain/value-objects/PRId';
-import { GitHubAPIClient } from '../external/github/GitHubAPIClient';
-import { GitHubPRMapper } from '../external/github/GitHubPRMapper';
-import { Repository } from '../../domain/value-objects/Repository';
+import type { CommentRepository } from '@domain/repositories/CommentRepository';
+import { Comment } from '@domain/entities/Comment';
+import { PRId } from '@domain/value-objects/PRId';
+import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
+import { GitHubPRMapper } from '@infrastructure/external/github/GitHubPRMapper';
+import { Repository } from '@domain/value-objects/Repository';
 
 export class GitHubCommentRepository implements CommentRepository {
   constructor(private githubClient: GitHubAPIClient) {}

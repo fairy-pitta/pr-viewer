@@ -1,7 +1,7 @@
 // presentation/web/components/dashboard/StatsCards.tsx
 'use client';
 
-import type { PRDTO } from '../../../../application/dto/PRDTO';
+import type { PRDTO } from '@application/dto/PRDTO';
 import styles from './StatsCards.module.css';
 
 interface StatsCardsProps {

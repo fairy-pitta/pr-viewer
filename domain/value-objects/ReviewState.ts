@@ -1,5 +1,5 @@
 // domain/value-objects/ReviewState.ts
-import { InvalidReviewStateError } from '../errors/InvalidReviewStateError';
+import { InvalidReviewStateError } from '@domain/errors/InvalidReviewStateError';
 
 export class ReviewState {
   private constructor(private readonly value: string) {

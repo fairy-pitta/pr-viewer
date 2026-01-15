@@ -1,7 +1,7 @@
 // application/use-cases/filter-prs/FilterPRsUseCase.ts
-import type { PRRepository } from '../../../domain/repositories/PRRepository';
-import { PRMapper } from '../../mappers/PRMapper';
-import type { PRDTO } from '../../dto/PRDTO';
+import type { PRRepository } from '@domain/repositories/PRRepository';
+import { PRMapper } from '@application/mappers/PRMapper';
+import type { PRDTO } from '@application/dto/PRDTO';
 import { FilterPRsQuery } from './FilterPRsQuery';
 
 export class FilterPRsUseCase {
