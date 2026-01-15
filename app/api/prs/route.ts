@@ -1,4 +1,3 @@
-// api/prs/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { GetPRsUseCase } from '@application/use-cases/get-prs/GetPRsUseCase';
 import { UserId } from '@domain/entities/User';
@@ -11,6 +10,21 @@ export async function GET(request: NextRequest) {
 
     if (!userId) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
+    }
+
+    // Authorizationヘッダーからトークンを取得（オプション）
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '') || process.env.GITHUB_ACCESS_TOKEN || '';
+
+    // dependencyContainerを初期化（IndexedDBを使用）
+    if (token) {
+      await dependencyContainer.initialize({
+        githubAccessToken: token,
+        indexedDB: {
+          dbName: 'pr-viewer',
+          version: 1,
+        },
+      });
     }
 
     const deps = dependencyContainer.getDependencies();

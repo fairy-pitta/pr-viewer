@@ -1,8 +1,10 @@
-// api/prs/sync/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { SyncPRsUseCase } from '@application/use-cases/sync-prs/SyncPRsUseCase';
 import { UserId } from '@domain/entities/User';
 import { dependencyContainer } from '@infrastructure/config/dependencies';
+import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
+import { GitHubCommentRepository } from '@infrastructure/repositories/GitHubCommentRepository';
+import { GitHubReviewRepository } from '@infrastructure/repositories/GitHubReviewRepository';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,16 +27,22 @@ export async function POST(request: NextRequest) {
     }
 
     // トークンでGitHubAPIClientを作成
-    const { GitHubAPIClient } = await import('@infrastructure/external/github/GitHubAPIClient');
     const githubClient = new GitHubAPIClient(token);
-
-    const deps = dependencyContainer.getDependencies();
     
-    // GitHubリポジトリを作成（トークンを使用）
-    const { GitHubCommentRepository } = await import('@infrastructure/repositories/GitHubCommentRepository');
-    const { GitHubReviewRepository } = await import('@infrastructure/repositories/GitHubReviewRepository');
+    // GitHubリポジトリを作成
     const commentRepository = new GitHubCommentRepository(githubClient);
     const reviewRepository = new GitHubReviewRepository(githubClient);
+
+    // dependencyContainerを初期化（IndexedDBを使用）
+    await dependencyContainer.initialize({
+      githubAccessToken: token,
+      indexedDB: {
+        dbName: 'pr-viewer',
+        version: 1,
+      },
+    });
+
+    const deps = dependencyContainer.getDependencies();
 
     const useCase = new SyncPRsUseCase(
       deps.prRepository,
