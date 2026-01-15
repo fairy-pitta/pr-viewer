@@ -19,10 +19,10 @@ PR Viewerは、GitHubのPull Requestを効率的に管理するためのWebア�
 
 - **フロントエンド**: Next.js 14 (App Router) + TypeScript + CSS Modules
 - **バックエンド**: Vercel Serverless Functions (API Routes)
-- **認証**: GitHub App (OAuth flow)
+- **認証**: GitHub Personal Access Token (PAT)
 - **データストレージ**: Vercel KV (Redis) / IndexedDB
 - **通知**: PWA Push Notifications + Browser Notifications
-- **デプロイ**: Vercel
+- **デプロイ**: Vercel / Cloudflare Pages
 
 ## アーキテクチャ
 
@@ -100,6 +100,20 @@ GITHUB_ACCESS_TOKEN=your_personal_access_token
 ```
 
 この場合、ユーザーはログインなしで使用できます（セキュリティ上の推奨事項ではありません）。
+
+## 使い方
+
+1. **ログイン**: `/login` ページでPATを入力してログイン
+2. **PRの同期**: PR一覧ページでGitHub User IDを入力し、「同期」ボタンをクリック
+3. **フィルタリング**: サイドバーのフィルターを使用してPRを絞り込み
+4. **詳細確認**: PRカードをクリックして詳細を確認（今後実装予定）
+
+## デザインの特徴
+
+- **モダンなUI**: グラデーションとシャドウを活用した洗練されたデザイン
+- **レスポンシブ**: モバイル・タブレット・デスクトップに対応
+- **アニメーション**: ホバーエフェクトとトランジションでユーザー体験を向上
+- **カラーパレット**: 統一されたカラーパレットで視認性を向上
 
 ## デプロイ
 
