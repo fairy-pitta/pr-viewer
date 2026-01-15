@@ -1,0 +1,40 @@
+/* presentation/web/components/filters/FilterSidebar.module.css */
+.sidebar {
+  width: 250px;
+  padding: var(--spacing-md);
+  background: white;
+  border-right: 1px solid #e0e0e0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.filterGroup {
+  margin-bottom: var(--spacing-md);
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: var(--spacing-sm);
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: var(--font-size-base);
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

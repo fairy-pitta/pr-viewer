@@ -1,0 +1,11 @@
+/* presentation/web/components/pr/PRList.module.css */
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--color-secondary);
+}
