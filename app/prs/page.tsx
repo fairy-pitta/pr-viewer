@@ -1,4 +1,4 @@
-// presentation/web/app/prs/page.tsx
+// prs/page.tsx
 'use client';
 
 import { useState } from 'react';

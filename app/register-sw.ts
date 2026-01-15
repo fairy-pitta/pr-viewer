@@ -1,4 +1,4 @@
-// presentation/web/app/register-sw.ts
+// register-sw.ts
 'use client';
 
 export function registerServiceWorker() {

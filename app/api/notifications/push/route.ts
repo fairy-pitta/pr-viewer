@@ -1,4 +1,4 @@
-// presentation/web/app/api/notifications/push/route.ts
+// api/notifications/push/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { NotifyUserUseCase } from '../../../../application/use-cases/notify-user/NotifyUserUseCase';
 import { PRId } from '../../../../domain/value-objects/PRId';

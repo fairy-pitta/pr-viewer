@@ -1,4 +1,4 @@
-// presentation/web/app/api/prs/sync/route.ts
+// api/prs/sync/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { SyncPRsUseCase } from '../../../../application/use-cases/sync-prs/SyncPRsUseCase';
 import { UserId } from '../../../../domain/entities/User';
