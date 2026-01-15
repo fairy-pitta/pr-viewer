@@ -44,10 +44,13 @@ describe('StatsCards', () => {
 
     render(<StatsCards prs={prs} />);
 
-    expect(screen.getByText('4')).toBeInTheDocument(); // 合計
-    expect(screen.getByText('2')).toBeInTheDocument(); // Open (2つ)
-    expect(screen.getByText('1')).toBeInTheDocument(); // Draft (1つ)
-    expect(screen.getByText('1')).toBeInTheDocument(); // Merged (1つ)
+    // より具体的なセレクタを使用
+    const values = screen.getAllByText(/^\d+$/);
+    const valueTexts = values.map(v => v.textContent);
+    
+    expect(valueTexts).toContain('4'); // 合計
+    expect(valueTexts.filter(v => v === '2').length).toBeGreaterThanOrEqual(1); // Open (2つ)
+    expect(valueTexts.filter(v => v === '1').length).toBeGreaterThanOrEqual(2); // Draft (1つ) と Merged (1つ)
   });
 
   it('should show needs review count', () => {
@@ -59,12 +62,16 @@ describe('StatsCards', () => {
     render(<StatsCards prs={prs} />);
 
     // レビュー待ちは2つ（両方ともpending > 0）
-    expect(screen.getByText('2')).toBeInTheDocument();
+    const values = screen.getAllByText(/^\d+$/);
+    const valueTexts = values.map(v => v.textContent);
+    expect(valueTexts.filter(v => v === '2').length).toBeGreaterThanOrEqual(1);
   });
 
   it('should render empty stats when no PRs', () => {
     render(<StatsCards prs={[]} />);
 
-    expect(screen.getByText('0')).toBeInTheDocument(); // 合計
+    // すべての値が0になるので、getAllByTextを使用
+    const zeros = screen.getAllByText('0');
+    expect(zeros.length).toBeGreaterThan(0);
   });
 });

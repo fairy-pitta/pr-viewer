@@ -1,5 +1,5 @@
 import { PRStatusCalculator } from '../PRStatusCalculator';
-import { PR } from '@domain/entities/PR';
+import { PR, ReviewStatus } from '@domain/entities/PR';
 import { Review } from '@domain/entities/Review';
 import { PRState } from '@domain/value-objects/PRState';
 import { ReviewState } from '@domain/value-objects/ReviewState';
@@ -106,38 +106,74 @@ describe('PRStatusCalculator', () => {
   });
 
   describe('determinePRState', () => {
-    it('should return MERGED if PR is already merged', () => {
-      const pr = PR.create({
-        ...createMockPR() as any,
-        status: PRState.MERGED,
-      });
-      const reviews = [];
-
-      const state = calculator.determinePRState(pr, reviews);
-      expect(state).toBe(PRState.MERGED);
+  it('should return MERGED if PR is already merged', () => {
+    const pr = PR.create({
+      id: 'pr-1',
+      number: 1,
+      title: 'Test PR',
+      url: 'https://github.com/owner/repo/pull/1',
+      repository: { owner: 'owner', name: 'repo' },
+      author: { login: 'author' },
+      assignees: [],
+      reviewers: [],
+      status: PRState.MERGED,
+      reviewStatus: ReviewStatus.empty(),
+      comments: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSyncedAt: new Date(),
     });
+    const reviews = [];
 
-    it('should return CLOSED if PR is already closed', () => {
-      const pr = PR.create({
-        ...createMockPR() as any,
-        status: PRState.CLOSED,
-      });
-      const reviews = [];
+    const state = calculator.determinePRState(pr, reviews);
+    expect(state).toBe(PRState.MERGED);
+  });
 
-      const state = calculator.determinePRState(pr, reviews);
-      expect(state).toBe(PRState.CLOSED);
+  it('should return CLOSED if PR is already closed', () => {
+    const pr = PR.create({
+      id: 'pr-1',
+      number: 1,
+      title: 'Test PR',
+      url: 'https://github.com/owner/repo/pull/1',
+      repository: { owner: 'owner', name: 'repo' },
+      author: { login: 'author' },
+      assignees: [],
+      reviewers: [],
+      status: PRState.CLOSED,
+      reviewStatus: ReviewStatus.empty(),
+      comments: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSyncedAt: new Date(),
     });
+    const reviews = [];
 
-    it('should return DRAFT if PR is draft', () => {
-      const pr = PR.create({
-        ...createMockPR() as any,
-        status: PRState.DRAFT,
-      });
-      const reviews = [];
+    const state = calculator.determinePRState(pr, reviews);
+    expect(state).toBe(PRState.CLOSED);
+  });
 
-      const state = calculator.determinePRState(pr, reviews);
-      expect(state).toBe(PRState.DRAFT);
+  it('should return DRAFT if PR is draft', () => {
+    const pr = PR.create({
+      id: 'pr-1',
+      number: 1,
+      title: 'Test PR',
+      url: 'https://github.com/owner/repo/pull/1',
+      repository: { owner: 'owner', name: 'repo' },
+      author: { login: 'author' },
+      assignees: [],
+      reviewers: [],
+      status: PRState.DRAFT,
+      reviewStatus: ReviewStatus.empty(),
+      comments: [],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      lastSyncedAt: new Date(),
     });
+    const reviews = [];
+
+    const state = calculator.determinePRState(pr, reviews);
+    expect(state).toBe(PRState.DRAFT);
+  });
 
     it('should return OPEN for open PRs', () => {
       const pr = createMockPR();

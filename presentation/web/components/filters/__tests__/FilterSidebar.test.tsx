@@ -38,7 +38,8 @@ describe('FilterSidebar', () => {
     const user = userEvent.setup();
     render(<FilterSidebar />);
 
-    const searchInput = screen.getByLabelText('検索') as HTMLInputElement;
+    // placeholderで検索
+    const searchInput = screen.getByPlaceholderText('タイトル、説明...') as HTMLInputElement;
     await user.type(searchInput, 'test query');
 
     expect(searchInput.value).toBe('test query');

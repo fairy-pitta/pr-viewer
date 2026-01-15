@@ -1,10 +1,32 @@
+// next/serverをモック
+jest.mock('next/server', () => {
+  class MockNextRequest {
+    constructor(public url: string) {}
+    get nextUrl() {
+      return {
+        searchParams: new URL(this.url).searchParams,
+      };
+    }
+  }
+
+  class MockNextResponse {
+    static json(data: any, init?: any) {
+      return {
+        json: async () => data,
+        status: init?.status || 200,
+      };
+    }
+  }
+
+  return {
+    NextRequest: MockNextRequest,
+    NextResponse: MockNextResponse,
+  };
+});
+
 import { dependencyContainer } from '@infrastructure/config/dependencies';
 import { GetPRsUseCase } from '@application/use-cases/get-prs/GetPRsUseCase';
 import { GET } from '../route';
-
-// モックを設定
-jest.mock('@infrastructure/config/dependencies');
-jest.mock('@application/use-cases/get-prs/GetPRsUseCase');
 
 // NextRequestのモック
 class MockNextRequest {
@@ -15,6 +37,10 @@ class MockNextRequest {
     };
   }
 }
+
+// モックを設定
+jest.mock('@infrastructure/config/dependencies');
+jest.mock('@application/use-cases/get-prs/GetPRsUseCase');
 
 describe('GET /api/prs', () => {
   const mockGetDependencies = dependencyContainer.getDependencies as jest.MockedFunction<
@@ -53,7 +79,7 @@ describe('GET /api/prs', () => {
       notificationService: {} as any,
     });
 
-    const request = new NextRequest('http://localhost:3000/api/prs?userId=user123');
+    const request = new MockNextRequest('http://localhost:3000/api/prs?userId=user123') as any;
     const response = await GET(request);
     const data = await response.json();
 

@@ -29,8 +29,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       <h2 className={styles.title}>フィルター</h2>
       
       <div className={styles.filterGroup}>
-        <label className={styles.label}>リポジトリ</label>
+        <label htmlFor="repository-filter" className={styles.label}>リポジトリ</label>
         <input
+          id="repository-filter"
           type="text"
           className={styles.input}
           placeholder="owner/repo"
@@ -40,8 +41,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>状態</label>
+        <label htmlFor="status-filter" className={styles.label}>状態</label>
         <select
+          id="status-filter"
           className={styles.select}
           value={filters.status || ''}
           onChange={(e) => handleChange('status', e.target.value)}
@@ -55,8 +57,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>担当者</label>
+        <label htmlFor="assignee-filter" className={styles.label}>担当者</label>
         <input
+          id="assignee-filter"
           type="text"
           className={styles.input}
           placeholder="username"
@@ -66,8 +69,9 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>検索</label>
+        <label htmlFor="search-filter" className={styles.label}>検索</label>
         <input
+          id="search-filter"
           type="text"
           className={styles.input}
           placeholder="タイトル、説明..."

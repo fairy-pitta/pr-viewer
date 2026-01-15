@@ -86,8 +86,11 @@ describe('Comment', () => {
 
   it('should check isFromBot correctly', () => {
     const botComment = Comment.create({
-      ...createMockComment() as any,
+      id: 'comment-bot',
       author: { login: 'bot', type: 'Bot' },
+      content: 'Bot comment',
+      source: CommentSource.BOT,
+      createdAt: new Date(),
     });
     expect(botComment.isFromBot()).toBe(true);
 
@@ -100,15 +103,21 @@ describe('Comment', () => {
     expect(userComment.isFromReviewer()).toBe(true);
 
     const botComment = Comment.create({
-      ...createMockComment() as any,
+      id: 'comment-bot',
       author: { login: 'bot', type: 'Bot' },
+      content: 'Bot comment',
+      source: CommentSource.BOT,
+      createdAt: new Date(),
     });
     expect(botComment.isFromReviewer()).toBe(false);
   });
 
   it('should check isNewerThan correctly', () => {
     const comment = Comment.create({
-      ...createMockComment() as any,
+      id: 'comment-1',
+      author: { login: 'user1', type: 'User' },
+      content: 'Comment',
+      source: CommentSource.REVIEWER,
       createdAt: new Date('2024-01-02'),
     });
 
@@ -126,7 +135,11 @@ describe('Comment', () => {
 
   it('should unresolve comment', () => {
     const resolvedComment = Comment.create({
-      ...createMockComment() as any,
+      id: 'comment-1',
+      author: { login: 'user1', type: 'User' },
+      content: 'Comment',
+      source: CommentSource.REVIEWER,
+      createdAt: new Date(),
       isResolved: true,
     });
     const unresolvedComment = resolvedComment.unresolve();

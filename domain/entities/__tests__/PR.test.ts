@@ -256,13 +256,25 @@ describe('PR', () => {
     expect(prWithoutReview.needsReview()).toBe(false);
 
     const prWithPendingReview = PR.create({
-      ...createMockPR() as any,
+      id: 'pr-123',
+      number: 123,
+      title: 'Test PR',
+      url: 'https://github.com/owner/repo/pull/123',
+      repository: { owner: 'owner', name: 'repo' },
+      author: { login: 'author' },
+      assignees: [],
+      reviewers: [],
+      status: PRState.OPEN,
       reviewStatus: ReviewStatus.create({
         approved: 0,
         changesRequested: 0,
         commented: 0,
         pending: 1,
       }),
+      comments: [],
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-02'),
+      lastSyncedAt: new Date('2024-01-03'),
     });
     expect(prWithPendingReview.needsReview()).toBe(true);
   });
@@ -277,8 +289,20 @@ describe('PR', () => {
     });
 
     const pr = PR.create({
-      ...createMockPR() as any,
+      id: 'pr-123',
+      number: 123,
+      title: 'Test PR',
+      url: 'https://github.com/owner/repo/pull/123',
+      repository: { owner: 'owner', name: 'repo' },
+      author: { login: 'author' },
+      assignees: [],
+      reviewers: [],
+      status: PRState.OPEN,
+      reviewStatus: ReviewStatus.empty(),
       comments: [comment],
+      createdAt: new Date('2024-01-01'),
+      updatedAt: new Date('2024-01-02'),
+      lastSyncedAt: new Date('2024-01-03'),
     });
 
     expect(pr.hasNewComments(new Date('2024-01-01'))).toBe(true);
