@@ -19,9 +19,17 @@ export function usePRs(userId: string | null) {
       setError(null);
 
       try {
-        const response = await fetch(`/api/prs?userId=${userId}`);
+        const token = typeof window !== 'undefined' ? sessionStorage.getItem('github_token') : null;
+        const headers: HeadersInit = {};
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`;
+        }
+        const response = await fetch(`/api/prs?userId=${userId}`, {
+          headers,
+        });
         if (!response.ok) {
-          throw new Error('Failed to fetch PRs');
+          const errorData = await response.json().catch(()=>({}));
+          throw new Error(`Failed to fetch PRs: ${response.status} ${response.statusText}`);
         }
         const data = await response.json();
         setPRs(data);

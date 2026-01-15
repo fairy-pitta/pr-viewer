@@ -15,6 +15,9 @@ export default function PRsPage() {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [filters, setFilters] = useState<FilterState>({});
+  // #region agent log
+  typeof window !== 'undefined' && fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:usePRs-call',message:'Calling usePRs hook',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+  // #endregion
   const { prs, loading, error } = usePRs(userId);
   const { sync, syncing } = useSync();
 
@@ -23,11 +26,20 @@ export default function PRsPage() {
     if (typeof window !== 'undefined') {
       const token = sessionStorage.getItem('github_token');
       const userStr = sessionStorage.getItem('github_user');
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:session-check',message:'Checking session storage',data:{hasToken:!!token,tokenLength:token?.length||0,hasUserStr:!!userStr,userStr:userStr},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       
       if (userStr) {
         try {
           const user = JSON.parse(userStr);
+          // #region agent log
+          fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:before-setUserId',message:'About to set userId',data:{userId:user.login,currentUserId:userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+          // #endregion
           setUserId(user.login);
+          // #region agent log
+          fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:user-set',message:'User ID set from session',data:{userId:user.login},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+          // #endregion
         } catch (e) {
           // パースエラーは無視
         }
@@ -35,6 +47,9 @@ export default function PRsPage() {
       
       // トークンがない場合はログインページにリダイレクト
       if (!token) {
+        // #region agent log
+        fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/prs/page.tsx:no-token-redirect',message:'No token found - redirecting to login',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
         router.push('/login');
       }
     }

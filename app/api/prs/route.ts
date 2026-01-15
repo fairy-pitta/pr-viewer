@@ -14,9 +14,18 @@ export async function GET(request: NextRequest) {
 
     // Authorizationヘッダーからトークンを取得
     const authHeader = request.headers.get('authorization');
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/route.ts:header-check',message:'Checking authorization header',data:{hasAuthHeader:!!authHeader,authHeaderPrefix:authHeader?.substring(0,20)||'none',allHeaders:Object.fromEntries(request.headers.entries())},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
     const token = authHeader?.replace('Bearer ', '') || process.env.GITHUB_ACCESS_TOKEN || '';
+    // #region agent log
+    fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/route.ts:token-extracted',message:'Token extracted',data:{hasToken:!!token,tokenLength:token.length,tokenPrefix:token.substring(0,4)||'none',fromEnv:!!process.env.GITHUB_ACCESS_TOKEN},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+    // #endregion
 
     if (!token) {
+      // #region agent log
+      fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/route.ts:no-token',message:'No token found - returning 401',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+      // #endregion
       return NextResponse.json(
         { error: 'GitHub access token is required' },
         { status: 401 }

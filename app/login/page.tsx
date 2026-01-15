@@ -36,6 +36,9 @@ export default function LoginPage() {
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('github_token', pat);
         sessionStorage.setItem('github_user', JSON.stringify(user));
+        // #region agent log
+        fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'login/page.tsx:token-saved',message:'Token saved to sessionStorage',data:{tokenLength:pat.length,userId:user.login,hasToken:!!pat},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
       }
 
       router.push('/prs');
