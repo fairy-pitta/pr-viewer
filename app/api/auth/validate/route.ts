@@ -23,7 +23,6 @@ export async function POST(request: NextRequest) {
         user: {
           id: user.id.toString(),
           login: user.login,
-          name: user.name,
           avatarUrl: user.avatar_url,
         },
       });
