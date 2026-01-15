@@ -1,7 +1,7 @@
 // presentation/web/app/layout.tsx
 import type { Metadata } from 'next';
 import './globals.css';
-import { ClientScript } from '../components/ClientScript';
+import { ClientScript } from '../../components/ClientScript';
 
 export const metadata: Metadata = {
   title: 'PR Viewer',
