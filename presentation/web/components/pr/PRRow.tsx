@@ -9,17 +9,6 @@ interface PRRowProps {
   currentUserId?: string;
 }
 
-type Priority = 'urgent' | 'action' | 'blocked' | 'good' | 'pending' | 'draft';
-
-function getPriority(pr: PRDTO, currentUserId?: string): Priority {
-  if (pr.status === 'draft') return 'draft';
-  if (pr.reviewers?.includes(currentUserId || '')) return 'urgent';
-  if (pr.reviewStatus.changesRequested > 0) return 'blocked';
-  if (pr.comments.unresolved > 0) return 'action';
-  if (pr.reviewStatus.approved > 0 && pr.reviewStatus.changesRequested === 0) return 'good';
-  return 'pending';
-}
-
 function getTimeAgo(dateString: string): string {
   const date = new Date(dateString);
   const now = new Date();
@@ -32,104 +21,149 @@ function getTimeAgo(dateString: string): string {
   return `${Math.floor(seconds / 604800)}w`;
 }
 
-function getSourceBadges(bySource?: Record<string, number>): { name: string; count: number; type: string }[] {
-  if (!bySource) return [];
+function getActionLabel(action: PRDTO['actionNeeded']): { text: string; style: string } {
+  switch (action) {
+    case 'review':
+      return { text: 'NEEDS YOUR REVIEW', style: 'actionReview' };
+    case 'address_feedback':
+      return { text: 'ADDRESS FEEDBACK', style: 'actionFeedback' };
+    case 'respond_comments':
+      return { text: 'RESPOND TO COMMENTS', style: 'actionComments' };
+    case 'ready_to_merge':
+      return { text: 'READY TO MERGE', style: 'actionReady' };
+    case 'waiting':
+      return { text: 'WAITING FOR REVIEW', style: 'actionWaiting' };
+    default:
+      return { text: '', style: '' };
+  }
+}
 
-  const badges: { name: string; count: number; type: string }[] = [];
+function formatReviewers(reviewers: { login: string; isBot: boolean }[]): string {
+  if (reviewers.length === 0) return '';
 
-  Object.entries(bySource).forEach(([source, count]) => {
-    if (count > 0) {
-      const sourceLower = source.toLowerCase();
-      let type = 'human';
-      let name = source;
-
-      if (sourceLower.includes('copilot')) {
-        type = 'copilot';
-        name = 'Copilot';
-      } else if (sourceLower.includes('coderabbit')) {
-        type = 'coderabbit';
-        name = 'CodeRabbit';
-      } else if (sourceLower.includes('bot')) {
-        type = 'bot';
-        name = 'Bot';
-      }
-
-      badges.push({ name, count, type });
+  const names = reviewers.map(r => {
+    if (r.isBot) {
+      // Shorten bot names
+      if (r.login.toLowerCase().includes('coderabbit')) return 'CodeRabbit';
+      if (r.login.toLowerCase().includes('copilot')) return 'Copilot';
+      return r.login.replace('[bot]', '').trim();
     }
+    return r.login;
   });
 
-  return badges;
+  if (names.length <= 2) return names.join(', ');
+  return `${names[0]}, ${names[1]} +${names.length - 2}`;
+}
+
+function formatCommentBreakdown(bySource?: Record<string, number>): string {
+  if (!bySource || Object.keys(bySource).length === 0) return '';
+
+  const parts: string[] = [];
+  let humanCount = 0;
+
+  for (const [source, count] of Object.entries(bySource)) {
+    const sourceLower = source.toLowerCase();
+    if (sourceLower.includes('coderabbit')) {
+      parts.push(`CodeRabbit ${count}`);
+    } else if (sourceLower.includes('copilot')) {
+      parts.push(`Copilot ${count}`);
+    } else if (sourceLower.includes('bot')) {
+      parts.push(`Bot ${count}`);
+    } else {
+      humanCount += count;
+    }
+  }
+
+  if (humanCount > 0) {
+    parts.push(`Human ${humanCount}`);
+  }
+
+  return parts.join(', ');
 }
 
 export function PRRow({ pr, currentUserId }: PRRowProps) {
-  const priority = getPriority(pr, currentUserId);
   const timeAgo = getTimeAgo(pr.updatedAt);
-  const sourceBadges = getSourceBadges(pr.comments.bySource);
+  const action = getActionLabel(pr.actionNeeded);
+  const commentBreakdown = formatCommentBreakdown(pr.comments.bySource);
 
   const handleClick = () => {
     window.open(pr.url, '_blank', 'noopener,noreferrer');
   };
 
+  // Determine row color based on action needed
+  let rowStyle = styles.row;
+  if (pr.actionNeeded === 'review' || pr.actionNeeded === 'address_feedback') {
+    rowStyle += ` ${styles.needsAction}`;
+  } else if (pr.actionNeeded === 'ready_to_merge') {
+    rowStyle += ` ${styles.ready}`;
+  } else if (pr.status === 'draft') {
+    rowStyle += ` ${styles.draft}`;
+  }
+
   return (
     <div
-      className={`${styles.row} ${styles[priority]}`}
+      className={rowStyle}
       onClick={handleClick}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => e.key === 'Enter' && handleClick()}
     >
       {/* Priority indicator */}
-      <div className={styles.indicator} />
+      <div className={`${styles.indicator} ${pr.actionNeeded === 'review' || pr.actionNeeded === 'address_feedback' ? styles.indicatorRed : pr.actionNeeded === 'ready_to_merge' ? styles.indicatorGreen : ''}`} />
 
       {/* Main content */}
       <div className={styles.content}>
-        {/* Left: Title and meta */}
-        <div className={styles.titleSection}>
+        {/* Top row: Action + Title */}
+        <div className={styles.topRow}>
+          {action.text && (
+            <span className={`${styles.actionBadge} ${styles[action.style]}`}>
+              {action.text}
+            </span>
+          )}
           <span className={styles.title}>{pr.title}</span>
-          <div className={styles.meta}>
-            <span className={styles.repo}>{pr.repository.fullName}</span>
-            <span className={styles.separator}>#{pr.number}</span>
-            <span className={styles.author}>by {pr.author.login}</span>
-            <span className={styles.time}>{timeAgo}</span>
-          </div>
         </div>
 
-        {/* Right: Status indicators with text labels */}
-        <div className={styles.status}>
-          {/* Review status with text */}
+        {/* Middle row: Meta info */}
+        <div className={styles.meta}>
+          <span className={styles.repo}>{pr.repository.fullName}</span>
+          <span className={styles.separator}>#{pr.number}</span>
+          <span className={styles.author}>by {pr.author.login}</span>
+          <span className={styles.time}>{timeAgo}</span>
+        </div>
+
+        {/* Bottom row: Status details */}
+        <div className={styles.statusRow}>
+          {/* Approvals with names */}
           {pr.reviewStatus.approved > 0 && (
-            <span className={`${styles.badge} ${styles.approved}`}>
-              {pr.reviewStatus.approved} approved
+            <span className={styles.approved}>
+              Approved by {formatReviewers(pr.reviewStatus.approvedBy)}
             </span>
           )}
+
+          {/* Changes requested with names */}
           {pr.reviewStatus.changesRequested > 0 && (
-            <span className={`${styles.badge} ${styles.changes}`}>
-              {pr.reviewStatus.changesRequested} changes
+            <span className={styles.changes}>
+              Changes by {formatReviewers(pr.reviewStatus.changesRequestedBy)}
             </span>
           )}
+
+          {/* Pending reviews */}
           {pr.reviewStatus.pending > 0 && (
-            <span className={`${styles.badge} ${styles.pendingBadge}`}>
+            <span className={styles.pending}>
               {pr.reviewStatus.pending} pending
             </span>
           )}
 
-          {/* Comments with text */}
+          {/* Comments with breakdown */}
           {pr.comments.total > 0 && (
-            <span className={`${styles.badge} ${pr.comments.unresolved > 0 ? styles.unresolved : styles.comments}`}>
+            <span className={styles.comments}>
               {pr.comments.total} comments
-              {pr.comments.unresolved > 0 && ` (${pr.comments.unresolved} open)`}
+              {commentBreakdown && ` (${commentBreakdown})`}
+              {pr.comments.unresolved > 0 && (
+                <span className={styles.unresolved}> - {pr.comments.unresolved} open</span>
+              )}
             </span>
           )}
-
-          {/* Source badges */}
-          {sourceBadges.map((badge) => (
-            <span
-              key={badge.name}
-              className={`${styles.sourceBadge} ${styles[badge.type]}`}
-            >
-              {badge.name}: {badge.count}
-            </span>
-          ))}
         </div>
       </div>
     </div>
