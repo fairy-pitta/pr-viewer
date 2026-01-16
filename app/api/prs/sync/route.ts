@@ -2,30 +2,205 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'edge';
 
-import { UserId } from '@domain/entities/User';
-import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
-import { GitHubPRMapper } from '@infrastructure/external/github/GitHubPRMapper';
-import { CommentAnalyzer } from '@domain/services/CommentAnalyzer';
 import type { PRDTO, ReviewerInfo } from '@application/dto/PRDTO';
 
-const commentAnalyzer = new CommentAnalyzer();
+// Inlined GitHub API client to avoid import issues on Cloudflare Pages
+async function githubRequest<T>(
+  token: string,
+  endpoint: string
+): Promise<T> {
+  const response = await fetch(`https://api.github.com${endpoint}`, {
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'pr-viewer',
+    },
+  });
 
+  if (!response.ok) {
+    const remaining = response.headers.get('X-RateLimit-Remaining');
+    if (response.status === 403 && remaining === '0') {
+      throw new Error('GitHub API rate limit exceeded');
+    }
+    throw new Error(`GitHub API error: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+async function getPR(token: string, owner: string, repo: string, number: number): Promise<any> {
+  return githubRequest(token, `/repos/${owner}/${repo}/pulls/${number}`);
+}
+
+async function searchPRs(token: string, query: string): Promise<any[]> {
+  const prs: any[] = [];
+  let page = 1;
+  const perPage = 100;
+
+  while (true) {
+    const endpoint = `/search/issues?q=type:pr+${query}+state:open&page=${page}&per_page=${perPage}`;
+    const response = await githubRequest<{ items: any[] }>(token, endpoint);
+
+    if (response.items.length === 0) break;
+
+    for (const item of response.items) {
+      try {
+        const repoUrl = item.repository_url;
+        if (!repoUrl) continue;
+
+        const parts = new URL(repoUrl).pathname.split('/').filter(Boolean);
+        const reposIdx = parts.indexOf('repos');
+        if (reposIdx === -1) continue;
+
+        const owner = parts[reposIdx + 1];
+        const repo = parts[reposIdx + 2];
+        if (!owner || !repo) continue;
+
+        const pr = await getPR(token, owner, repo, item.number);
+        if (pr?.head?.repo) {
+          prs.push(pr);
+        }
+      } catch {
+        // Skip items that fail to hydrate
+      }
+    }
+
+    page++;
+    if (response.items.length < perPage) break;
+  }
+
+  return prs;
+}
+
+async function getAllPRs(token: string, userId: string): Promise<any[]> {
+  const allPRs: any[] = [];
+  const seenIds = new Set<string | number>();
+
+  const addPRs = (prs: any[]) => {
+    for (const pr of prs) {
+      if (!seenIds.has(pr.id)) {
+        seenIds.add(pr.id);
+        allPRs.push(pr);
+      }
+    }
+  };
+
+  // Fetch PRs from different sources
+  const queries = [
+    `author:${userId}`,
+    `review-requested:${userId}`,
+    `commenter:${userId}`,
+    `reviewed-by:${userId}`,
+    `assignee:${userId}`,
+  ];
+
+  for (const query of queries) {
+    try {
+      const prs = await searchPRs(token, query);
+      addPRs(prs);
+    } catch (e) {
+      console.error(`Failed to search PRs with query ${query}:`, e);
+    }
+  }
+
+  return allPRs;
+}
+
+async function getComments(token: string, owner: string, repo: string, number: number): Promise<any[]> {
+  const comments: any[] = [];
+
+  // Issue comments
+  let page = 1;
+  while (true) {
+    const response = await githubRequest<any[]>(
+      token,
+      `/repos/${owner}/${repo}/issues/${number}/comments?page=${page}&per_page=100`
+    );
+    if (response.length === 0) break;
+    comments.push(...response);
+    page++;
+    if (response.length < 100) break;
+  }
+
+  // Review comments
+  page = 1;
+  while (true) {
+    const response = await githubRequest<any[]>(
+      token,
+      `/repos/${owner}/${repo}/pulls/${number}/comments?page=${page}&per_page=100`
+    );
+    if (response.length === 0) break;
+    comments.push(...response);
+    page++;
+    if (response.length < 100) break;
+  }
+
+  return comments;
+}
+
+async function getReviews(token: string, owner: string, repo: string, number: number): Promise<any[]> {
+  const reviews: any[] = [];
+  let page = 1;
+
+  while (true) {
+    const response = await githubRequest<any[]>(
+      token,
+      `/repos/${owner}/${repo}/pulls/${number}/reviews?page=${page}&per_page=100`
+    );
+    if (response.length === 0) break;
+    reviews.push(...response);
+    page++;
+    if (response.length < 100) break;
+  }
+
+  return reviews;
+}
+
+// Inlined helper functions
 function isBot(login: string): boolean {
   const botPatterns = ['[bot]', 'copilot', 'coderabbit', 'dependabot', 'renovate', 'github-actions'];
   const lowerLogin = login.toLowerCase();
   return botPatterns.some(pattern => lowerLogin.includes(pattern));
 }
 
+function getCommentSource(author: { type: string; login: string }): string {
+  if (author.type === 'Bot') {
+    const login = author.login.toLowerCase();
+    if (login.includes('copilot')) return 'copilot';
+    if (login.includes('coderabbit')) return 'coderabbit';
+    return 'bot';
+  }
+  return 'reviewer';
+}
+
+function isReviewApproved(state: string): boolean {
+  return state === 'APPROVED';
+}
+
+function isReviewChangesRequested(state: string): boolean {
+  return state === 'CHANGES_REQUESTED';
+}
+
+function isReviewCommented(state: string): boolean {
+  return state === 'COMMENTED';
+}
+
+interface SimpleReview {
+  reviewer: { login: string; avatarUrl?: string };
+  state: string;
+  submittedAt: Date;
+}
+
 function determineAction(
-  pr: any,
-  reviews: any[],
+  pr: { author: { login: string }; reviewers?: string[]; comments?: { unresolved: number } },
+  reviews: SimpleReview[],
   currentUserId: string
 ): PRDTO['actionNeeded'] {
   const isAuthor = pr.author.login === currentUserId;
   const isRequestedReviewer = pr.reviewers?.includes(currentUserId);
 
-  // Get latest review per user (most recent state)
-  const latestReviewByUser = new Map<string, any>();
+  // Get latest review per user
+  const latestReviewByUser = new Map<string, SimpleReview>();
   for (const review of reviews) {
     const existing = latestReviewByUser.get(review.reviewer.login);
     if (!existing || review.submittedAt > existing.submittedAt) {
@@ -33,9 +208,9 @@ function determineAction(
     }
   }
 
-  const hasChangesRequested = Array.from(latestReviewByUser.values()).some(r => r.requiresChanges());
-  const hasApprovals = Array.from(latestReviewByUser.values()).some(r => r.isApproved());
-  const hasUnresolvedComments = pr.comments?.unresolved > 0;
+  const hasChangesRequested = Array.from(latestReviewByUser.values()).some(r => isReviewChangesRequested(r.state));
+  const hasApprovals = Array.from(latestReviewByUser.values()).some(r => isReviewApproved(r.state));
+  const hasUnresolvedComments = (pr.comments?.unresolved ?? 0) > 0;
 
   if (isAuthor) {
     if (hasChangesRequested) return 'address_feedback';
@@ -70,15 +245,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const githubClient = new GitHubAPIClient(token);
-    const githubPRs = await githubClient.getPRs(userId);
-
+    const githubPRs = await getAllPRs(token, userId);
     const prDTOs: PRDTO[] = [];
 
     for (const githubPR of githubPRs) {
       try {
-        const owner = (githubPR as any).head?.repo?.owner?.login;
-        const repo = (githubPR as any).head?.repo?.name;
+        const owner = githubPR.head?.repo?.owner?.login;
+        const repo = githubPR.head?.repo?.name;
         const number = githubPR.number;
 
         if (!owner || !repo) continue;
@@ -88,25 +261,31 @@ export async function POST(request: NextRequest) {
         let rawReviews: any[] = [];
 
         try {
-          rawComments = await githubClient.getComments(owner, repo, number);
-          rawReviews = await githubClient.getReviews(owner, repo, number);
+          rawComments = await getComments(token, owner, repo, number);
+          rawReviews = await getReviews(token, owner, repo, number);
         } catch (e) {
           console.error(`Failed to fetch details for PR #${number}:`, e);
         }
 
-        // Map to domain objects for analysis
-        const comments = rawComments.map(c => GitHubPRMapper.toDomainComment(c));
-        const reviews = rawReviews.map(r => GitHubPRMapper.toDomainReview(r));
+        // Map reviews to simple objects
+        const reviews: SimpleReview[] = rawReviews.map(r => ({
+          reviewer: {
+            login: r.user.login,
+            avatarUrl: r.user.avatar_url,
+          },
+          state: r.state,
+          submittedAt: new Date(r.submitted_at),
+        }));
 
         // Analyze comments by source
-        const commentStats = commentAnalyzer.analyzeComments(comments);
         const bySource: Record<string, number> = {};
-        commentStats.bySource.forEach((count, source) => {
-          bySource[source] = count;
-        });
+        for (const comment of rawComments) {
+          const source = getCommentSource({ type: comment.user.type, login: comment.user.login });
+          bySource[source] = (bySource[source] ?? 0) + 1;
+        }
 
         // Get latest review state per reviewer
-        const latestReviewByUser = new Map<string, any>();
+        const latestReviewByUser = new Map<string, SimpleReview>();
         for (const review of reviews) {
           const existing = latestReviewByUser.get(review.reviewer.login);
           if (!existing || review.submittedAt > existing.submittedAt) {
@@ -124,9 +303,9 @@ export async function POST(request: NextRequest) {
             avatarUrl: review.reviewer.avatarUrl,
             isBot: isBot(login),
           };
-          if (review.isApproved()) {
+          if (isReviewApproved(review.state)) {
             approvedBy.push(info);
-          } else if (review.requiresChanges()) {
+          } else if (isReviewChangesRequested(review.state)) {
             changesRequestedBy.push(info);
           }
         }
@@ -134,30 +313,30 @@ export async function POST(request: NextRequest) {
         // Calculate counts
         const approved = approvedBy.length;
         const changesRequested = changesRequestedBy.length;
-        const commented = Array.from(latestReviewByUser.values()).filter(r => r.isCommented()).length;
-        const requestedCount = (githubPR as any).requested_reviewers?.length ?? 0;
+        const commented = Array.from(latestReviewByUser.values()).filter(r => isReviewCommented(r.state)).length;
+        const requestedCount = githubPR.requested_reviewers?.length ?? 0;
         const pending = Math.max(0, requestedCount);
 
-        // Build domain PR for action calculation
-        const domainPR = GitHubPRMapper.toDomainPR(githubPR as any, comments, reviews);
+        // Comments are not tracked for resolution via this API
+        const unresolvedCount = 0;
 
         const dto: PRDTO = {
           id: githubPR.id.toString(),
           number: githubPR.number,
           title: githubPR.title,
-          url: (githubPR as any).html_url,
+          url: githubPR.html_url,
           repository: {
             owner,
             name: repo,
             fullName: `${owner}/${repo}`,
           },
           author: {
-            login: (githubPR as any).user.login,
-            avatarUrl: (githubPR as any).user.avatar_url,
+            login: githubPR.user.login,
+            avatarUrl: githubPR.user.avatar_url,
           },
-          assignees: ((githubPR as any).assignees || []).map((a: any) => a.login),
-          reviewers: ((githubPR as any).requested_reviewers || []).map((r: any) => r.login),
-          status: (githubPR as any).draft ? 'draft' : (githubPR as any).state,
+          assignees: (githubPR.assignees || []).map((a: any) => a.login),
+          reviewers: (githubPR.requested_reviewers || []).map((r: any) => r.login),
+          status: githubPR.draft ? 'draft' : githubPR.state,
           reviewStatus: {
             approved,
             changesRequested,
@@ -167,24 +346,27 @@ export async function POST(request: NextRequest) {
             changesRequestedBy,
           },
           comments: {
-            total: comments.length,
-            unresolved: comments.filter(c => !c.isResolved).length,
-            lastCommentAt: comments.length > 0
-              ? comments.reduce((latest, c) => c.createdAt > latest ? c.createdAt : latest, comments[0].createdAt).toISOString()
+            total: rawComments.length,
+            unresolved: unresolvedCount,
+            lastCommentAt: rawComments.length > 0
+              ? rawComments.reduce((latest, c) => {
+                  const date = new Date(c.created_at);
+                  return date > latest ? date : latest;
+                }, new Date(rawComments[0].created_at)).toISOString()
               : undefined,
             bySource: Object.keys(bySource).length > 0 ? bySource : undefined,
           },
           actionNeeded: determineAction(
             {
-              author: { login: (githubPR as any).user.login },
-              reviewers: ((githubPR as any).requested_reviewers || []).map((r: any) => r.login),
-              comments: { unresolved: comments.filter(c => !c.isResolved).length },
+              author: { login: githubPR.user.login },
+              reviewers: (githubPR.requested_reviewers || []).map((r: any) => r.login),
+              comments: { unresolved: unresolvedCount },
             },
             reviews,
             userId
           ),
-          createdAt: (githubPR as any).created_at,
-          updatedAt: (githubPR as any).updated_at,
+          createdAt: githubPR.created_at,
+          updatedAt: githubPR.updated_at,
           lastSyncedAt: new Date().toISOString(),
         };
 
@@ -194,7 +376,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Sort by updatedAt descending (most recent first)
+    // Sort by updatedAt descending
     prDTOs.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
     return NextResponse.json({ success: true, prs: prDTOs });
