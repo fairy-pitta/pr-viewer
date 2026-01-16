@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SyncPRsUseCase } from '@application/use-cases/sync-prs/SyncPRsUseCase';
+import { PRMapper } from '@application/mappers/PRMapper';
 import { UserId } from '@domain/entities/User';
-import { dependencyContainer } from '@infrastructure/config/dependencies';
 import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
 import { GitHubCommentRepository } from '@infrastructure/repositories/GitHubCommentRepository';
 import { GitHubReviewRepository } from '@infrastructure/repositories/GitHubReviewRepository';
@@ -9,7 +9,7 @@ import { GitHubReviewRepository } from '@infrastructure/repositories/GitHubRevie
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { userId, force } = body;
+    const { userId } = body;
 
     if (!userId) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 });
@@ -28,42 +28,29 @@ export async function POST(request: NextRequest) {
 
     // トークンでGitHubAPIClientを作成
     const githubClient = new GitHubAPIClient(token);
-    
+
     // GitHubリポジトリを作成
     const commentRepository = new GitHubCommentRepository(githubClient);
     const reviewRepository = new GitHubReviewRepository(githubClient);
 
-    // dependencyContainerを初期化（IndexedDBを使用）
-    await dependencyContainer.initialize({
-      githubAccessToken: token,
-      indexedDB: {
-        dbName: 'pr-viewer',
-        version: 1,
-      },
-    });
-
-    const deps = dependencyContainer.getDependencies();
-
     const useCase = new SyncPRsUseCase(
-      deps.prRepository,
       commentRepository,
       reviewRepository,
       githubClient
     );
 
-    await useCase.execute({
+    const prs = await useCase.execute({
       userId: UserId.create(userId),
-      force,
     });
-    // #region agent log
-    fetch('http://127.0.0.1:7245/ingest/b1622b6f-a5c6-4d74-992f-0246650411d2',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'app/api/prs/sync/route.ts:sync-completed',message:'Sync completed successfully',data:{userId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
-    // #endregion
 
-    return NextResponse.json({ success: true });
+    // PRをDTOに変換して返す
+    const prDTOs = PRMapper.toDTOs(prs);
+
+    return NextResponse.json({ success: true, prs: prDTOs });
   } catch (error) {
     console.error('Error syncing PRs:', error);
     return NextResponse.json(
-      { error: 'Failed to sync PRs' },
+      { error: 'Failed to sync PRs', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

@@ -1,45 +1,74 @@
-/* globals.css */
+/* globals.css - Terminal Theme */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 :root {
-  --color-primary: #667eea;
-  --color-primary-dark: #764ba2;
-  --color-secondary: #6c757d;
-  --color-success: #28a745;
-  --color-danger: #dc3545;
-  --color-warning: #ffc107;
-  --color-info: #17a2b8;
-  --color-light: #f8f9fa;
-  --color-dark: #343a40;
-  --color-border: #e0e0e0;
-  --color-text: #212529;
-  --color-text-secondary: #6c757d;
-  
+  /* Terminal palette - pure black and white */
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #111111;
+  --bg-card-hover: #1a1a1a;
+  --bg-elevated: #222222;
+
+  /* Status colors - classic terminal */
+  --status-urgent: #ff5f56;
+  --status-action: #ffbd2e;
+  --status-blocked: #ff5f56;
+  --status-good: #27c93f;
+  --status-good-glow: rgba(39, 201, 63, 0.2);
+  --status-pending: #666666;
+  --status-draft: #444444;
+
+  /* No accent colors - just white */
+  --accent-primary: #ffffff;
+  --accent-secondary: #cccccc;
+
+  /* Text colors - grayscale */
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --text-muted: #808080;
+  --text-dim: #505050;
+
+  /* Badge/source colors - muted terminal colors */
+  --badge-copilot: #27c93f;
+  --badge-coderabbit: #ffbd2e;
+  --badge-reviewer: #ffffff;
+  --badge-bot: #808080;
+
+  /* Borders */
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-muted: rgba(255, 255, 255, 0.15);
+
+  /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 1.5rem;
   --spacing-xl: 2rem;
   --spacing-2xl: 3rem;
-  
-  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  --font-size-base: 1rem;
-  --font-size-sm: 0.875rem;
-  --font-size-lg: 1.125rem;
-  --font-size-xl: 1.25rem;
-  
-  --border-radius-sm: 4px;
-  --border-radius-md: 8px;
-  --border-radius-lg: 12px;
-  --border-radius-xl: 16px;
-  
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 20px 60px rgba(0, 0, 0, 0.3);
-  
-  --transition: 0.2s ease;
-  --transition-slow: 0.3s ease;
+
+  /* Typography - all monospace */
+  --font-display: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 0.875rem;
+  --font-size-lg: 1rem;
+  --font-size-xl: 1.125rem;
+  --font-size-2xl: 1.25rem;
+
+  /* Effects - minimal */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+
+  --transition-fast: 0.1s ease;
+  --transition-base: 0.15s ease;
+  --transition-slow: 0.25s ease;
 }
 
 * {
@@ -52,38 +81,65 @@ html {
   scroll-behavior: smooth;
 }
 
-html,
-body {
+html, body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family: var(--font-family);
+  font-family: var(--font-mono);
   font-size: var(--font-size-base);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  color: var(--color-text);
-  background: var(--color-light);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
 }
 
 a {
   color: inherit;
   text-decoration: none;
-  transition: color var(--transition);
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 button {
-  font-family: inherit;
+  font-family: var(--font-mono);
   font-size: inherit;
 }
 
 input, select, textarea {
-  font-family: inherit;
+  font-family: var(--font-mono);
 }
 
 code {
-  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
-  font-size: 0.9em;
+  font-family: var(--font-mono);
+}
+
+/* Minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-dim);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Selection */
+::selection {
+  background: var(--text-primary);
+  color: var(--bg-primary);
 }
