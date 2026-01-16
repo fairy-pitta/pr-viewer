@@ -1,5 +1,7 @@
 // api/prs/filter/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+
+export const runtime = 'edge';
 import { FilterPRsUseCase } from '@application/use-cases/filter-prs/FilterPRsUseCase';
 import { UserId } from '@domain/entities/User';
 import { PRState } from '@domain/value-objects/PRState';

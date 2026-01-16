@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+export const runtime = 'edge';
+
 import { GitHubAPIClient } from '@infrastructure/external/github/GitHubAPIClient';
 
 export async function POST(request: NextRequest) {
