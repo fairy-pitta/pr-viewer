@@ -1,0 +1,220 @@
+/* PRRow.module.css - Terminal style rows */
+
+.row {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.row:hover {
+  background: var(--bg-card-hover);
+}
+
+.row:focus-visible {
+  outline: 1px solid var(--text-primary);
+  outline-offset: -1px;
+}
+
+/* Priority indicator - left edge */
+.indicator {
+  width: 3px;
+  flex-shrink: 0;
+}
+
+.urgent .indicator {
+  background: var(--status-urgent);
+}
+
+.action .indicator {
+  background: var(--status-action);
+}
+
+.blocked .indicator {
+  background: var(--status-urgent);
+}
+
+.good .indicator {
+  background: var(--status-good);
+}
+
+.pending .indicator {
+  background: var(--status-pending);
+}
+
+.draft .indicator {
+  background: var(--status-draft);
+}
+
+.draft {
+  opacity: 0.5;
+}
+
+.draft:hover {
+  opacity: 0.7;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  padding: 10px 12px;
+  min-width: 0;
+}
+
+/* Title section */
+.titleSection {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.title {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.repo {
+  color: var(--text-muted);
+}
+
+.separator {
+  color: var(--text-dim);
+}
+
+.author {
+  color: var(--text-dim);
+}
+
+.time {
+  color: var(--text-dim);
+}
+
+/* Status section */
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  border: 1px solid var(--border-muted);
+  background: transparent;
+}
+
+.approved {
+  color: var(--status-good);
+  border-color: var(--status-good);
+}
+
+.changes {
+  color: var(--status-urgent);
+  border-color: var(--status-urgent);
+}
+
+.pendingBadge {
+  color: var(--text-muted);
+  border-color: var(--text-dim);
+}
+
+.comments {
+  color: var(--text-muted);
+  border-color: var(--text-dim);
+}
+
+.unresolved {
+  color: var(--status-action);
+  border-color: var(--status-action);
+}
+
+/* Source badges */
+.sourceBadge {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--font-size-xs);
+  padding: 2px 6px;
+  border: 1px solid var(--border-muted);
+}
+
+.sourceBadge.copilot {
+  color: var(--badge-copilot);
+  border-color: var(--badge-copilot);
+}
+
+.sourceBadge.coderabbit {
+  color: var(--badge-coderabbit);
+  border-color: var(--badge-coderabbit);
+}
+
+.sourceBadge.human {
+  color: var(--text-secondary);
+  border-color: var(--text-dim);
+}
+
+.sourceBadge.bot {
+  color: var(--badge-bot);
+  border-color: var(--badge-bot);
+}
+
+/* Priority-specific row styles on hover */
+.urgent:hover {
+  background: rgba(255, 95, 86, 0.08);
+}
+
+.action:hover {
+  background: rgba(255, 189, 46, 0.08);
+}
+
+.blocked:hover {
+  background: rgba(255, 95, 86, 0.08);
+}
+
+.good:hover {
+  background: rgba(39, 201, 63, 0.08);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .status {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

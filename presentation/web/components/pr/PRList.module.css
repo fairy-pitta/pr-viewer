@@ -1,11 +1,56 @@
-/* presentation/web/components/pr/PRList.module.css */
+/* PRList.module.css */
+
 .list {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
 }
 
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.cardWrapper {
+  animation: slideIn 0.4s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+@keyframes slideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Empty state */
 .empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2xl);
+  background: var(--bg-card);
+  border: 1px dashed var(--border-muted);
+  border-radius: var(--radius-lg);
   text-align: center;
-  padding: var(--spacing-xl);
-  color: var(--color-secondary);
+}
+
+.emptyIcon {
+  color: var(--text-dim);
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.emptyText {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  max-width: 300px;
 }
