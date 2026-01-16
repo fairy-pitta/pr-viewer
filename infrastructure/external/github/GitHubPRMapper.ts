@@ -22,11 +22,17 @@ export class GitHubPRMapper {
         : PRState.CLOSED
       : PRState.OPEN;
 
+    const approved = reviews.filter(r => r.isApproved()).length;
+    const changesRequested = reviews.filter(r => r.requiresChanges()).length;
+    const commented = reviews.filter(r => r.isCommented()).length;
+    const requestedCount = githubPR.requested_reviewers?.length ?? 0;
+    const pending = Math.max(0, requestedCount - reviews.length);
+
     const reviewStatus = ReviewStatus.create({
-      approved: reviews.filter(r => r.isApproved()).length,
-      changesRequested: reviews.filter(r => r.requiresChanges()).length,
-      commented: reviews.filter(r => r.isCommented()).length,
-      pending: githubPR.requested_reviewers.length - reviews.length,
+      approved,
+      changesRequested,
+      commented,
+      pending,
     });
 
     return PR.create({
