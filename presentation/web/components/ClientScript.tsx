@@ -2,7 +2,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { registerServiceWorker } from '@presentation/web/app/register-sw';
+import { registerServiceWorker } from '@app/register-sw';
 
 export function ClientScript() {
   useEffect(() => {
