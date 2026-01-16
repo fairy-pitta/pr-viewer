@@ -24,12 +24,31 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
     onFilterChange?.(newFilters);
   };
 
+  const clearFilters = () => {
+    setFilters({});
+    onFilterChange?.({});
+  };
+
+  const hasFilters = Object.values(filters).some(v => v);
+
   return (
     <div className={styles.sidebar}>
-      <h2 className={styles.title}>フィルター</h2>
-      
+      <div className={styles.header}>
+        <h2 className={styles.title}>Filters</h2>
+        {hasFilters && (
+          <button className={styles.clearButton} onClick={clearFilters}>
+            Clear
+          </button>
+        )}
+      </div>
+
       <div className={styles.filterGroup}>
-        <label className={styles.label}>リポジトリ</label>
+        <label className={styles.label}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          Repository
+        </label>
         <input
           type="text"
           className={styles.input}
@@ -40,13 +59,20 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>状態</label>
+        <label className={styles.label}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          Status
+        </label>
         <select
           className={styles.select}
           value={filters.status || ''}
           onChange={(e) => handleChange('status', e.target.value)}
         >
-          <option value="">すべて</option>
+          <option value="">All</option>
           <option value="open">Open</option>
           <option value="draft">Draft</option>
           <option value="merged">Merged</option>
@@ -55,7 +81,13 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>担当者</label>
+        <label className={styles.label}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          Assignee
+        </label>
         <input
           type="text"
           className={styles.input}
@@ -66,11 +98,17 @@ export function FilterSidebar({ onFilterChange }: FilterSidebarProps) {
       </div>
 
       <div className={styles.filterGroup}>
-        <label className={styles.label}>検索</label>
+        <label className={styles.label}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          Search
+        </label>
         <input
           type="text"
           className={styles.input}
-          placeholder="タイトル、説明..."
+          placeholder="Title, description..."
           value={filters.search || ''}
           onChange={(e) => handleChange('search', e.target.value)}
         />
