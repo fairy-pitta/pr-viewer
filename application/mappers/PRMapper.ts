@@ -37,6 +37,8 @@ export class PRMapper {
         changesRequested: pr.reviewStatus.changesRequested,
         commented: pr.reviewStatus.commented,
         pending: pr.reviewStatus.pending,
+        approvedBy: [],
+        changesRequestedBy: [],
       },
       comments: {
         total: pr.comments.total,

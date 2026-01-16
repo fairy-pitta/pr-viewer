@@ -1,5 +1,11 @@
 // application/dto/PRDTO.ts
 
+export interface ReviewerInfo {
+  login: string;
+  avatarUrl?: string;
+  isBot: boolean;
+}
+
 export interface PRDTO {
   id: string;
   number: number;
@@ -22,6 +28,9 @@ export interface PRDTO {
     changesRequested: number;
     commented: number;
     pending: number;
+    // NEW: Who gave each review
+    approvedBy: ReviewerInfo[];
+    changesRequestedBy: ReviewerInfo[];
   };
   comments: {
     total: number;
@@ -29,6 +38,8 @@ export interface PRDTO {
     lastCommentAt?: string;
     bySource?: Record<string, number>;
   };
+  // NEW: Action indicator for the current user
+  actionNeeded?: 'review' | 'address_feedback' | 'respond_comments' | 'ready_to_merge' | 'waiting' | 'none';
   createdAt: string;
   updatedAt: string;
   lastSyncedAt: string;
