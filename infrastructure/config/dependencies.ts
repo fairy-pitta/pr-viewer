@@ -60,14 +60,14 @@ export class DependencyContainer {
     } else if (config.indexedDB) {
       // ブラウザ環境かサーバー環境かを判定
       const isBrowser = typeof window !== 'undefined' && typeof window.indexedDB !== 'undefined';
-      
+
       if (isBrowser) {
         // ブラウザ環境ではIndexedDBを使用
         const dbClient = new IndexedDBClient(config.indexedDB);
         await dbClient.open();
         prRepository = new IndexedDBPRRepository(dbClient);
       } else {
-        // サーバー環境ではメモリストレージを使用（一時的な解決策）
+        // サーバー環境ではメモリストレージを使用
         const memoryClient = new MemoryStorageClient();
         await memoryClient.open();
         prRepository = new IndexedDBPRRepository(memoryClient as any);

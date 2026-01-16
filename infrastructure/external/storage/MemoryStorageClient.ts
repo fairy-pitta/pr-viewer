@@ -46,7 +46,6 @@ export class MemoryStorageClient {
 
     const values = Array.from(store.values()) as T[];
 
-    // インデックスでのフィルタリング（簡易実装）
     if (indexName && indexValue) {
       return values.filter((item: any) => {
         if (typeof item === 'object' && item !== null) {
