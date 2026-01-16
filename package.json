@@ -7,20 +7,26 @@
     "dev:3001": "next dev -p 3001",
     "dev:3333": "next dev -p 3333",
     "build": "next build",
+    "build:pages": "npx @cloudflare/next-on-pages",
     "start": "next start",
     "start:3333": "next start -p 3333",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "deploy:worker": "cd worker && wrangler deploy",
+    "deploy:pages": "npm run build:pages && wrangler pages deploy .vercel/output/static --project-name=pr-viewer"
   },
   "dependencies": {
-    "next": "^14.2.0",
+    "next": "15.5.2",
     "react": "^18.3.0",
     "react-dom": "^18.3.0"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.0",
+    "@cloudflare/workers-types": "^4.20240512.0",
+    "wrangler": "^3.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",
     "@testing-library/user-event": "^14.6.1",

@@ -1,0 +1,13 @@
+# Cloudflare Pages configuration for Next.js app
+name = "pr-viewer"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = ".vercel/output/static"
+
+# KV Namespace for caching PR data
+[[kv_namespaces]]
+binding = "PR_CACHE"
+id = "3842f38d59714f799224eeff9b2e0412"
+
+[vars]
+ENVIRONMENT = "production"
